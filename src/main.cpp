@@ -342,7 +342,7 @@ void load_level(int l, bool terminate = true) {
   sprintf(title, "%d.txt - Editor", lvl);
   hwnd = FindWindowA(NULL, title);
 
-  SetWindowPos(hwnd, HWND_TOP, 100, 100, 960, 905, SWP_SHOWWINDOW);
+  SetWindowPos(hwnd, HWND_TOP, 100, 100, 965, 905, SWP_SHOWWINDOW);
   SetFocus(hwnd);
 
   for (int i = 0; i < 10; i++) {
