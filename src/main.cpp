@@ -209,24 +209,19 @@ void print_text(int text_x, int text_y, const char *text, int delay) {
   Sleep(100);
 }
 
-void update_play(bool can_jump = true) {
+void update_play(bool can_jump = true, int x_min = 0, int x_max = WIDTH - 1) {
   if (get_dur(update_clock) >= update_time) {
     update_clock = clock();
 
     if (keys[0] &&
-        x > 0 &&
+        x > x_min &&
         get_block(x - 1, y) != 'x')
       move(-1, 0);
     if (keys[1] &&
-        x < WIDTH - 1 &&
+        x < x_max &&
         get_block(x + 1, y) != 'x')
       move(+1, 0);
   }
-
-  // bool left = false;
-  // bool right = false;
-  // bool up = false;
-  // bool down = false;
 
   if (keys[2] && !keys_old[2] && jumping == 0 && can_jump) {
     jumping = 1;
@@ -249,20 +244,6 @@ void update_play(bool can_jump = true) {
   }
   if (!jumping && get_block(x, y + 1) != 'x' && y < HEIGHT - 1)
       move(0, +1);
-
-  char block = get_block(x, y);
-  switch (block) {
-  case '/':
-  case '\\':
-    move_to(0, 24);
-    break;
-  case '?':
-    puts("?");
-    break;
-  case 'O':
-    puts("O");
-    break;
-  }
 }
 
 int lvl = 0;
@@ -293,7 +274,18 @@ void intro() {
     update_play();
     if (x == 8) {
       print_text(4, 8, "Collect ? for ???.", 30);
+      progress++;
     }
+    break;
+  case 3:
+    update_play(true, 0, 22);
+    if (get_block(x, y) == '?') {
+      print_text(4, 10, "Avoid /\\.", 30);
+      progress++;
+    }
+    break;
+  case 4:
+    update_play();
     break;
   }
 }
