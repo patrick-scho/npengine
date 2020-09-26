@@ -1,27 +1,31 @@
-┌-------------------------------------------┐
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|                                           |
-|            ?      ?                       |
-|                                           |
-|                                           |
-|           xxx    xxx                    O |
-|                                      xxxxx|
-|                                xxxxxxxxxxx|
-|      xxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxxx|
-|      xxxxxxxxxxxxxxxxx/\/\xxxxxxxxxxxxxxxx|
-└-------------------------------------------┘
++--------------------------------------------------------+
+|                                                        |
+|                                                        |
+|                                                        |
+|                                                        |
+|                                                        |
+|                                                        |
+|                                                        |
+|                                                        |
+|  S                                                     |
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX-   -XXXXXXXXXXXXXXXXXXXXXXXXX|
+|XXXXXXXXXXXXXXXXXXXXXXXXXX- O -XXXXXXXXXXXXXXXXXXXXXXXXX|
++--------------------------------------------------------+
