@@ -96,7 +96,6 @@ void key_up(char c) {
   ip.ki.time = 0;
   ip.ki.dwExtraInfo = 0;
 
-  // Release key
   ip.ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
   SendInput(1, &ip, sizeof(INPUT));
 }
