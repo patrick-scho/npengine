@@ -10,6 +10,14 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
+#define CONSOLE
+
+#ifdef CONSOLE
+#pragma comment(linker, "/subsystem:console")
+#else
+#pragma comment(linker, "/subsystem:windows")
+#endif
+
 HWND hwnd = NULL;
 
 STARTUPINFOA si;
@@ -262,7 +270,7 @@ void update_play(bool can_jump = true, int x_min = 0, int x_max = WIDTH - 1) {
     move(0, +1);
 
   char b = get_block(x, y);
-  if (b == '/' || b == '\\' || b == '-')
+  if (b == '/' || b == '\\' || b == '<' || b == '>')
     move_to(spawn_x, spawn_y);
 }
 
@@ -334,6 +342,15 @@ void load_level(int l, bool terminate = true) {
   sprintf(title, "%d.txt - Editor", lvl);
   hwnd = FindWindowA(NULL, title);
 
+  SetWindowPos(hwnd, HWND_TOP, 100, 100, 960, 905, SWP_SHOWWINDOW);
+  SetFocus(hwnd);
+
+  for (int i = 0; i < 10; i++) {
+    press_down(VK_CONTROL);
+    press(VK_OEM_PLUS);
+    press_up(VK_CONTROL);
+  }
+
   setup();
 }
 
@@ -347,7 +364,7 @@ void intro() {
     break;
   case 1:
     update_play(false);
-    if (x == 5) {
+    if (x == 17) {
       print_text(4, 4, "Jump with up.", text_speed);
       print_text(4, 6, "Stand on x.", text_speed);
       progress++;
@@ -355,13 +372,13 @@ void intro() {
     break;
   case 2:
     update_play();
-    if (x == 8) {
+    if (x == 22) {
       print_text(4, 8, "Collect ? for ???.", text_speed);
       progress++;
     }
     break;
   case 3:
-    update_play(true, 0, 22);
+    update_play(true, 0, 33);
     if (get_block(x, y) == '?') {
       print_text(4, 10, "Avoid /\\.", text_speed);
       progress++;
@@ -383,7 +400,18 @@ void intro() {
   }
 }
 
-void lvl1() { update_play(); }
+void lvl1() {
+  static int progress = 0;
+  switch (progress) {
+  case 0:
+    print_text(4, 2, "Also avoid > and <.", text_speed);
+    progress++;
+    break;
+  case 1:
+    update_play();
+    break;
+  }
+}
 
 void update_game() {
   switch (lvl) {
@@ -396,14 +424,75 @@ void update_game() {
   }
 }
 
+void enter_keys(std::string input, int delay) {
+  for (int i = 0; i < input.size(); i++) {
+    if (input[i] == 't') {
+      press(VK_TAB);
+      Sleep(delay);
+    }
+    else if (input[i] == 's') {
+      press(VK_SPACE);
+      Sleep(delay);
+    }
+    else if (input[i] == '~') {
+      press_down(VK_LSHIFT);
+      enter_keys(input.substr(i+1, 1), delay);
+      press_up(VK_LSHIFT);
+      i++;
+    }
+    else {
+      int n = 0;
+      int len = 0;
+      while (input[i+len] >= '0' && input[i+len] <= '9') {
+        n *= 10;
+        n += input[i+len] - '0';
+        len++;
+      }
+      for (int j = 0; j < n; j++) {
+        if (input[i+len] == '~') {
+          enter_keys(input.substr(i+len, 2), delay);
+        }
+        else {
+          enter_keys(input.substr(i+len, 1), delay);
+        }          
+      }
+      if (input[i+len] == '~')
+        i++;
+      i += len;
+    }
+  }
+}
+
+void toggle_key_repeat() {
+  WinExec("c:\\windows\\system32\\control.exe /name Microsoft.EaseOfAccessCenter /page pageKeyboardEasierToUse", SW_NORMAL);
+  Sleep(500);
+
+  enter_keys("6ts9ts7~ts13ts5~tss6ts", 10);
+
+  Sleep(100);
+
+  press_down(VK_CONTROL);
+  press('W');
+  press_up(VK_CONTROL);
+
+  Sleep(1000);
+}
+
 /*
   Todo:
   - Msg Box Intro
   - Multi Jump
   - more blocks/lvls
   - Set Accessibility 
+  - Lua?
+  - Scrolling?
 */
+#ifdef CONSOLE
 int main(int argc, char **argv) {
+#else
+int WinMain(HINSTANCE a0, HINSTANCE a1, LPSTR a2, int a3) {
+#endif
+  toggle_key_repeat();
   // Dies zu programmieren mit der reduzierten Inputrate.
   // Ist nicht angenehm. Ich werde es ändern.......
 
@@ -452,9 +541,9 @@ int main(int argc, char **argv) {
     keys_old[3] = keys[3];
 
     WaitForSingleObject(pi.hProcess, wait_time);
-
-    SetWindowPos(hwnd, HWND_TOPMOST, 100, 100, 500, 500, SWP_SHOWWINDOW);
   }
+
+  toggle_key_repeat();
 
   destroydikeyboard();
 
