@@ -16,19 +16,20 @@ const int WIDTH = 43, HEIGHT = 25;
 int x = 0, y = 0;
 bool right = true;
 
+clock_t update_clock = clock();
+double update_time = 40;
+
 bool keys[4] = { false, false, false, false };
 bool keys_old[4] = { false, false, false, false };
 
 int jumping = 0;
 
 clock_t jump_clock = clock();
-double jump_time1 = 0.01;
-double jump_time2 = 0.05;
+double jump_time1 = 50;
+double jump_time2 = 100;
 int jump_height = 3;
 
-DWORD wait_time = 50;
-
-
+DWORD wait_time = 10;
 
 void press_down(WORD vk) {
   INPUT ip;
@@ -212,29 +213,25 @@ enum GameState {
   GS_START, GS_INTRO1, GS_INTRO2
 };
 
-clock_t update_clock = clock();
-double update_time = 30;
-
 void update_play(bool can_jump = true) {
-  if (get_dur(update_clock) >= update_time)
+  if (get_dur(update_clock) >= update_time) {
     update_clock = clock();
-  else
-    return;
+
+    if (keys[0] &&
+        x > 0 &&
+        get_block(x - 1, y) != 'x')
+      move(-1, 0);
+    if (keys[1] &&
+        x < WIDTH - 1 &&
+        get_block(x + 1, y) != 'x')
+      move(+1, 0);
+  }
 
   // bool left = false;
   // bool right = false;
   // bool up = false;
   // bool down = false;
 
-  if (keys[0] &&
-      x > 0 &&
-      get_block(x - 1, y) != 'x')
-    move(-1, 0);
-  if (keys[1] &&
-      x < WIDTH - 1 &&
-      get_block(x + 1, y) != 'x')
-    move(+1, 0);
-  // else 
   if (keys[2] && !keys_old[2] && jumping == 0 && can_jump) {
     jumping = 1;
     move(0, -1);
@@ -369,7 +366,7 @@ int main(int argc, char **argv) {
     keys_old[2] = keys[2];
     keys_old[3] = keys[3];
 
-    WaitForSingleObject( pi.hProcess, 10);
+    WaitForSingleObject( pi.hProcess, wait_time);
 
     SetWindowPos(hwnd, HWND_TOPMOST, 100, 100, 750, 750, SWP_SHOWWINDOW);
   }
