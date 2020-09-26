@@ -285,11 +285,15 @@ void intro() {
     update_play(false);
     if (x == 5) {
       print_text(4, 4, "Jump with up.", 30);
+      print_text(4, 6, "Stand on x.", 30);
       progress++;
     }
     break;
   case 2:
     update_play();
+    if (x == 8) {
+      print_text(4, 8, "Collect ? for ???.", 30);
+    }
     break;
   }
 }
