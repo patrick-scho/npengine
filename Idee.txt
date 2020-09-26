@@ -1,28 +1,67 @@
-spiel, wo die gemeplay mechanics in der Nutzung von "Editor" bestehen.
-Eine 2D Karte (bsp. siehe unten), bei der manche Teile sichtbar und andere verborgen sind.
+spiel, wo die gemeplay mechanics in der Nutzung von "Editor"
+bestehen.
+Eine 2D Karte (bsp. siehe unten), bei der manche Teile sichtbar
+und
+andere verborgen sind.
 Das Level muss überwunden werden, ohne in den Abgrund zu stürzen.
-Bei der Durchquerung des Levels, bleibt dem Spieler nur ein 3x3 Sichtfeld, in jede Richtung 1
+Bei der Durchquerung des Levels, bleibt dem Spieler nur ein 3x3
+Sichtfeld, in jede Richtung 1
 und der Aufbau des Levels wird aufgedeckt.
 Auf Zeit.
 (Systemsteuerung -> Tastatur, Verzögerung auf kurz.)
 
-----------------------------
-                            
-    Move with left/right    
-    Jump with up.           
-                            
-    Go, try it now.         
-                            
-    Stand on x.             
-    Jump over the hole.     
-                            
-    Jump into ? for ???.    
-                            
-    Finish lvl by reching O......................
-                            
-                            
-               ?   ?        
-                           O
-      xxxxx xxxxxxxxxx xxxxx
-     xxxxxx xxxxxxxxxx xxxxx
-----------------------------
+┌-------------------------------------------┐
+|                                           |
+|    Move with left/right.                  |
+|    Jump with up.                          |
+|                                           |
+|    Go, try it now.                        |
+|                                           |
+|    Stand on x.                            |
+|    Jump over the hole.                    |
+|                                           |
+|    Jump into ?? for ???.                  |
+|                                           |
+|    Finish lvl by reaching O               |
+|                                           |
+|                                           |
+|                                           |
+|                                           |
+|                                           |
+|                                           |
+|               ?    ?                      |
+|                                           |
+|                                           |
+|            xxxxxxxxxxx    xxxxxxxxxxxxxxxx|
+|            xxxxxxxxxxx    xxxxxxxxxxxxxxxx|
+|      xxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxxx|
+|      xxxxxxxxxxxxxxxxx/\/\xxxxxxxxxxxxxxxx|
+└-------------------------------------------┘
+
+
+
+
+
+
+
+
+Editor Prozess starten.
+Tastatureingabe async.
+Rechts into Hoch (Sprung), danach muss Rechts bei Halten
+  wieder als Ausgabe gelten.
+durch präzises Timing Position im Lvl tracken.
+Interne Repräsentation, in Grafik darstellen.
+Bei Sprung, mit PfeilHoch, wird -> und Runter eingegeben, und
+  andere Bewegungen ausgeglichen.
+(Animation)
+Bei Loch Runter automatisch, andere Bewegungen ausgeglichen.
+-> Zurück zum Anfang.
+
+Bei ? ...
+
+Bei O ...
+
+Start:
+
+13 runter -> 0 0
+17 runter
