@@ -209,10 +209,6 @@ void print_text(int text_x, int text_y, const char *text, int delay) {
   Sleep(100);
 }
 
-enum GameState {
-  GS_START, GS_INTRO1, GS_INTRO2
-};
-
 void update_play(bool can_jump = true) {
   if (get_dur(update_clock) >= update_time) {
     update_clock = clock();
@@ -269,10 +265,12 @@ void update_play(bool can_jump = true) {
   }
 }
 
-enum GameState game_state = GS_START;
-void update_game() {
-  switch (game_state) {
-  case GS_START:
+int lvl = 0;
+
+void intro() {
+  static int progress = 0;
+  switch (progress) {
+  case 0:
     press(VK_DOWN);
     press(VK_RIGHT);
     press(VK_RIGHT);
@@ -281,17 +279,25 @@ void update_game() {
 
     print_text(4, 2, "Move with left/right.", 30);
 
-    game_state = GS_INTRO1;
+    progress++;
     break;
-  case GS_INTRO1:
+  case 1:
     update_play(false);
     if (x == 5) {
       print_text(4, 4, "Jump with up.", 30);
-      game_state = GS_INTRO2;
+      progress++;
     }
     break;
-  case GS_INTRO2:
+  case 2:
     update_play();
+    break;
+  }
+}
+
+void update_game() {
+  switch (lvl) {
+  case 0:
+    intro();
     break;
   }
 }

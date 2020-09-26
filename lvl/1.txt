@@ -22,6 +22,6 @@
 |           xxx    xxx                    O |
 |                                      xxxxx|
 |                                xxxxxxxxxxx|
-|      xxxxx   xxxxxxxxx    xxxxxxxxxxxxxxxx|
-|      xxxxx   xxxxxxxxx/\/\xxxxxxxxxxxxxxxx|
+|      xxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxxx|
+|      xxxxxxxxxxxxxxxxx/\/\xxxxxxxxxxxxxxxx|
 └-------------------------------------------┘
