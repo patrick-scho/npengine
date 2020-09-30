@@ -23,7 +23,16 @@ const int WIDTH = 56, HEIGHT = 29;
 std::string map;
 
 clock_t game_clock;
-double dt;
+double frame_time = 30;
+
+int lvl = 0;
+
+// Util
+
+double get_dur(clock_t then) {
+  double result = (double)(clock() - then) / CLOCKS_PER_SEC;
+  return result * 1000;
+}
 
 // Edit
 
@@ -68,7 +77,10 @@ char get_block(int x, int y) {
 
 // Player
 struct Player {
+  bool left = false;
   int x, y;
+  int x_spawn, y_spawn;
+  int jumping = 0;
 
   void clear() {
     int pos = get_pos(x, y);
@@ -79,11 +91,13 @@ struct Player {
   void draw() {
     int pos = get_pos(x, y);
     select_length(pos, 1);
-    replace({ 'Q', 0 });
+    replace({ left ? '<' : '>', 0 });
   }
 
   void move_to(int x, int y) {
     clear();
+    if (this->x > x) left = true;
+    if (this->x < x) left = false;
     this->x = x;
     this->y = y;
     draw();
@@ -93,12 +107,21 @@ struct Player {
     move_to(x + dx, y + dy);
   }
 
-  bool collision(int xdir, int ydir) {
-    int newx = x + xdir;
-    int newy = y + ydir;
-    if (newx < 0 || newx >= WIDTH || newy < 0 || newy >= HEIGHT)
+  bool collision_x(int n) {
+    if (x + n < 0 || x + n >= WIDTH)
       return true;
-    return get_block(newx, newy) == 'X';
+    for (int i = 0; i != n; i += (n < 0 ? -1 : 1))
+      if (get_block(x + i + (n < 0 ? -1 : 1), y) == 'X')
+        return true;
+    return false;
+  }
+  bool collision_y(int n) {
+    if (y + n < 0 || y + n >= HEIGHT)
+      return true;
+    for (int i = 0; i != n; i += (n < 0 ? -1 : 1))
+      if (get_block(x, y + i + (n < 0 ? -1 : 1)) == 'X')
+        return true;
+    return false;
   }
 };
 Player player { 0, 0 };
@@ -125,15 +148,21 @@ std::string read_map(int lvl) {
 void redraw() {
   select_all();
   replace(map);
+  player.draw();
 }
 
-void load_level(int lvl) {
-  map = read_map(lvl);
+void load_level(int l) {
+  lvl = l;
+  map = read_map(l);
   redraw();
   for (int x = 0; x < WIDTH; x++) {
     for (int y = 0; y < HEIGHT; y++) {
-      if (map[get_pos(x, y)] == 'S')
+      if (map[get_pos(x, y)] == 'S') {
+        player.x_spawn = x;
+        player.y_spawn = y;
         player.move_to(x, y);
+        return;
+      }
     }
   }
 }
@@ -241,6 +270,131 @@ bool key_up(Key key) {
   return !key_state[(int)key];
 }
 
+// Gameplay
+  
+clock_t jump_clock = clock();
+int jump_height = 3;
+double jump_time1 = 50;
+double jump_time2 = 100;
+int text_speed = 50;
+
+void update_play(bool can_jump = true, int x_min = 0, int x_max = WIDTH - 1) {
+  if (key_down(Key::Left) &&
+      !player.collision_x(-1) &&
+      player.x > x_min)
+      player.move(-1, 0);
+  if (key_down(Key::Right) &&
+      !player.collision_x(1) &&
+      player.x < x_max)
+    player.move(+1, 0);
+
+  if (key_pressed(Key::Jump) &&
+      can_jump &&
+      player.jumping == 0 &&
+      !player.collision_y(-1)) {
+    player.jumping = 1;
+    player.move(0, -1);
+    jump_clock = clock();
+  }
+  if (player.jumping != 0) {
+    if (player.jumping < jump_height && get_dur(jump_clock) > jump_time1) {
+      if (!player.collision_y(-1)) {
+        player.move(0, -1);
+        player.jumping++;
+        jump_clock = clock();
+      } else {
+        player.jumping = jump_height;
+      }
+    } else if (player.jumping == jump_height && get_dur(jump_clock) > jump_time2) {
+      player.jumping = 0;
+    }
+  }
+  if (!player.jumping && !player.collision_y(1))
+    player.move(0, +1);
+
+  char b = get_block(player.x, player.y);
+  if (b == '/' || b == '\\' || b == '<' || b == '>')
+    player.move_to(player.x_spawn, player.y_spawn);
+}
+
+void print_text(int x, int y, string text, int delay) {
+  for (int i = 0; i < text.size(); i++) {
+    select_length(get_pos(x + i, y), 1);
+    replace(text.substr(i, 1));
+    Sleep(delay);
+  }
+}
+
+void intro() {
+  static int progress = 0;
+  switch (progress) {
+  case 0:
+    print_text(4, 2, "Move with left/right.", text_speed);
+
+    progress++;
+    break;
+  case 1:
+    update_play(false);
+    if (player.x == 17) {
+      print_text(4, 4, "Jump with up.", text_speed);
+      print_text(4, 6, "Stand on x.", text_speed);
+      progress++;
+    }
+    break;
+  case 2:
+    update_play();
+    if (player.x == 22) {
+      print_text(4, 8, "Collect ? for ???.", text_speed);
+      progress++;
+    }
+    break;
+  case 3:
+    update_play(true, 0, 33);
+    if (get_block(player.x, player.y) == '?') {
+      print_text(4, 10, "Avoid /\\.", text_speed);
+      progress++;
+    }
+    break;
+  case 4:
+    update_play();
+    if (player.x == 39) {
+      print_text(4, 14, "Finish lvl by reaching O.", text_speed);
+      progress++;
+    }
+    break;
+  case 5:
+    update_play();
+    if (get_block(player.x, player.y) == 'O') {
+      load_level(1);
+    }
+    break;
+  }
+}
+
+void lvl1() {
+  static int progress = 0;
+  switch (progress) {
+  case 0:
+    print_text(4, 2, "Also avoid > and <.", text_speed);
+    progress++;
+    break;
+  case 1:
+    update_play();
+    break;
+  }
+}
+
+void update_game() {
+  switch (lvl) {
+  case 0:
+    intro();
+    break;
+  case 1:
+    lvl1();
+    break;
+  }
+}
+
 #ifdef CONSOLE
 int main(int argc, char **argv) {
 #else
@@ -251,9 +405,12 @@ int WinMain(HINSTANCE a0, HINSTANCE a1, LPSTR a2, int a3) {
     puts("error");
     return 1;
   }
+
   load_level(0);
+  
   while (true) {
-    dt = ((double)clock() - game_clock) / CLOCKS_PER_SEC * 1000;
+    //dt = ((double)clock() - game_clock) / CLOCKS_PER_SEC * 1000;
+    if (get_dur(game_clock) < frame_time) continue;
     game_clock = clock();
     update_key_state();
 
@@ -261,12 +418,8 @@ int WinMain(HINSTANCE a0, HINSTANCE a1, LPSTR a2, int a3) {
       break;
     if (key_pressed(Key::Redraw))
       redraw();
-    if (key_down(Key::Left) && !player.collision(-1, 0))
-      player.move(-1, 0);
-    if (key_down(Key::Right) && !player.collision(1, 0))
-      player.move(+1, 0);
-    if (key_pressed(Key::Jump) && player.collision(0, 1))
-      player.move(0, -1);
+    
+    update_game();
 
     update_key_state_old();
   }
