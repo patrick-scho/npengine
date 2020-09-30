@@ -68,38 +68,18 @@ char get_block(int x, int y) {
 
 // Player
 struct Player {
-  int x_screen = -1, y_screen = -1;
-  double x, y, x_vel, y_vel;
+  int x, y;
 
   void clear() {
-    if (x_screen < 0 || y_screen < 0) return;
-    int pos = get_pos(x_screen, y_screen);
+    int pos = get_pos(x, y);
     select_length(pos, 1);
     replace({ map[pos], 0 });
   }
   
   void draw() {
-    if (collision_x(x - x_screen) || collision_y(y - y_screen)) {
-      x = x_screen;
-      y = y_screen;
-      return;
-    }
-    x_screen = round(x);
-    y_screen = round(y);
-    int pos = get_pos(x_screen, y_screen);
+    int pos = get_pos(x, y);
     select_length(pos, 1);
     replace({ 'Q', 0 });
-  }
-
-  void update() {
-    x += x_vel;
-    y += y_vel;
-    if (!collision_y(1) && y_vel < 9)
-      y_vel += 1;
-    if (abs(x - x_screen) >= 1 || abs(x - x_screen) >= 1) {
-      clear();
-      draw();
-    }
   }
 
   void move_to(int x, int y) {
@@ -113,21 +93,12 @@ struct Player {
     move_to(x + dx, y + dy);
   }
 
-  bool collision_x(int n) {
-    if (x + n < 0 || x + n >= WIDTH)
+  bool collision(int xdir, int ydir) {
+    int newx = x + xdir;
+    int newy = y + ydir;
+    if (newx < 0 || newx >= WIDTH || newy < 0 || newy >= HEIGHT)
       return true;
-    for (int i = 0; i != n; i += (n < 0 ? -1 : 1))
-      if (get_block(x_screen + i + (n < 0 ? -1 : 1), y_screen) == 'X')
-        return true;
-    return false;
-  }
-  bool collision_y(int n) {
-    if (y + n < 0 || y + n >= HEIGHT)
-      return true;
-    for (int i = 0; i != n; i += (n < 0 ? -1 : 1))
-      if (get_block(x_screen, y_screen + i + (n < 0 ? -1 : 1)) == 'X')
-        return true;
-    return false;
+    return get_block(newx, newy) == 'X';
   }
 };
 Player player { 0, 0 };
@@ -290,16 +261,12 @@ int WinMain(HINSTANCE a0, HINSTANCE a1, LPSTR a2, int a3) {
       break;
     if (key_pressed(Key::Redraw))
       redraw();
-    if (key_down(Key::Left) && !player.collision_x(-1))
+    if (key_down(Key::Left) && !player.collision(-1, 0))
       player.move(-1, 0);
-    if (key_down(Key::Right) && !player.collision_x(1))
+    if (key_down(Key::Right) && !player.collision(1, 0))
       player.move(+1, 0);
-    if (key_pressed(Key::Jump) && player.collision_y(1))
-      player.y_vel = -5;
-
-    player.update();
-
-    printf("%f %f\n", player.x, player.y);
+    if (key_pressed(Key::Jump) && player.collision(0, 1))
+      player.move(0, -1);
 
     update_key_state_old();
   }
