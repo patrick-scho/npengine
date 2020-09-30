@@ -95,7 +95,7 @@ struct Player {
     x += x_vel;
     y += y_vel;
     if (!collision_y(1) && y_vel < 9)
-      y_vel += 1;
+      y_vel += 0.001;
     if (abs(x - x_screen) >= 1 || abs(x - x_screen) >= 1) {
       clear();
       draw();
@@ -295,7 +295,7 @@ int WinMain(HINSTANCE a0, HINSTANCE a1, LPSTR a2, int a3) {
     if (key_down(Key::Right) && !player.collision_x(1))
       player.move(+1, 0);
     if (key_pressed(Key::Jump) && player.collision_y(1))
-      player.y_vel = -5;
+      player.y_vel = -0.001;
 
     player.update();
 
